@@ -1,0 +1,15 @@
+asgiref==3.11.1
+astroid==4.0.4
+charset-normalizer==3.4.7
+dill==0.4.1
+Django==6.0.3
+dotenv==0.9.9
+isort==8.0.1
+mccabe==0.7.0
+pillow==12.2.0
+platformdirs==4.9.4
+pylint==4.0.5
+python-dotenv==1.2.2
+reportlab==4.4.10
+sqlparse==0.5.5
+tomlkit==0.14.0
