@@ -1,0 +1,26 @@
+{% extends 'learning/base.html' %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-dark text-white">
+        <h2 class="mb-0">{{ word.english_word }}</h2>
+    </div>
+    <div class="card-body">
+        <p><strong>Перевод:</strong> {{ word.translation }}</p>
+        <p><strong>Транскрипция:</strong> {{ word.transcription }}</p>
+        <p><strong>Сложность:</strong> {{ word.get_difficulty_display }}</p>
+        <hr>
+        <h5>Пример использования:</h5>
+        <p class="font-italic">
+            {% if word.example_sentence %}
+                "{{ word.example_sentence }}"
+            {% else %}
+                Пример не добавлен.
+            {% endif %}
+        </p>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'word_list' %}" class="btn btn-secondary">Назад к списку</a>
+    </div>
+</div>
+{% endblock %}
