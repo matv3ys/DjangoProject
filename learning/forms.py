@@ -22,3 +22,27 @@ class WordForm(forms.ModelForm):
         if not re.match(r'^[a-zA-Z\s\-]+$', word):
             raise ValidationError("Используйте только английские буквы.")
         return word.lower() # Сохраняем всегда в нижнем регистре
+
+class ExportForm(forms.Form):
+    DIFFICULTY_CHOICES = [
+        ('all', 'Все уровни'),
+        ('easy', 'Easy (Легкие)'),
+        ('medium', 'Medium (Средние)'),
+        ('hard', 'Hard (Сложные)'),
+    ]
+
+    difficulty = forms.ChoiceField(
+        choices=DIFFICULTY_CHOICES,
+        label="Сложность слов",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    include_examples = forms.BooleanField(
+        required=False,
+        initial=True,
+        label="Включить примеры предложений",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data
