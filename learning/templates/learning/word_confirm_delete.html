@@ -1,0 +1,13 @@
+{% extends 'learning/base.html' %}
+{% block content %}
+<div class="card border-danger shadow">
+    <div class="card-body text-center">
+        <h3>Вы уверены, что хотите удалить слово "{{ word.english_word }}"?</h3>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Да, удалить</button>
+            <a href="{% url 'word_list' %}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
