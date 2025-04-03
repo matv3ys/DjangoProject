@@ -1,7 +1,14 @@
+"""
+Models
+"""
+
 from django.db import models
 from django.core.validators import MinLengthValidator
 
 class Word(models.Model):
+    """
+    Word model
+    """
     DIFFICULTY_CHOICES = [
         ('easy', 'Easy'),
         ('medium', 'Medium'),
@@ -38,6 +45,9 @@ class Word(models.Model):
         return f"{self.english_word} - {self.translation}"
 
     class Meta:
+        """
+        Meta information
+        """
         verbose_name = "Слово"
         verbose_name_plural = "Слова"
         ordering = ['-created_at']
