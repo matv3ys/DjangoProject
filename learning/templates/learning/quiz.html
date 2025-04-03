@@ -1,0 +1,42 @@
+{% extends 'learning/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div class="card shadow p-4">
+            <div class="d-flex justify-content-between mb-3">
+                <span class="badge bg-info text-dark">Счет: {{ score }}</span>
+                <a href="{% url 'reset_score' %}" class="btn btn-sm btn-link text-muted">Сбросить счет</a>
+            </div>
+
+            {% if feedback == "correct" %}
+                <div class="alert alert-success">
+                    <h4>✅ Правильно!</h4>
+                    <p>Продолжаем?</p>
+                    <a href="{% url 'quiz_view' %}" class="btn btn-primary">Следующее слово</a>
+                </div>
+            {% elif feedback == "wrong" %}
+                <div class="alert alert-danger">
+                    <h4>❌ Ошибка</h4>
+                    <p>Правильный ответ: <strong>{{ correct_answer }}</strong></p>
+                    <a href="{% url 'quiz_view' %}" class="btn btn-primary">Попробовать другое</a>
+                </div>
+            {% else %}
+                <h2 class="mb-4">Как переводится?</h2>
+                <h1 class="display-4 text-primary mb-4">{{ word.english_word }}</h1>
+                
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.answer }}
+                        {% if form.answer.errors %}
+                            <div class="text-danger small">{{ form.answer.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg w-100">Проверить</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

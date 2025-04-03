@@ -16,6 +16,7 @@
         <div class="container">
             <a class="navbar-brand" href="{% url 'word_list' %}">🔤 ForeignWords</a>
             <div class="navbar-nav">
+                <a class="nav-link" href="{% url 'quiz_view' %}">Тренировка</a>
                 <a class="nav-link" href="{% url 'word_list' %}">Список слов</a>
                 <a class="nav-link" href="{% url 'word_create' %}">Добавить слово</a>
                 <a class="nav-link" href="{% url 'export_pdf' %}">Экспорт PDF</a>

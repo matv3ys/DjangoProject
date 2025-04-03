@@ -1,10 +1,11 @@
 # learning/views.py
 import os
+import random
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.conf import settings
 from .models import Word
-from .forms import WordForm, ExportForm
+from .forms import WordForm, ExportForm, QuizForm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfgen import canvas  # Для PDF
 from reportlab.pdfbase.ttfonts import TTFont # Кириллица
@@ -89,3 +90,68 @@ def export_pdf(request):
     else:
         form = ExportForm()
     return render(request, 'learning/export_form.html', {'form': form, 'title': 'Настройка экспорта'})
+
+
+def quiz_view(request):
+    # 1. Инициализация счета
+    if 'score' not in request.session:
+        request.session['score'] = 0
+
+    # Получаем ID слова, на которое пользователь отвечает сейчас
+    current_word_id = request.session.get('quiz_word_id')
+    feedback = None
+    correct_answer = None
+
+    if request.method == "POST":
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            user_answer = form.cleaned_data['answer']
+            word = get_object_or_404(Word, id=current_word_id)
+
+            if user_answer.lower() == word.translation.lower().strip():
+                request.session['score'] += 1
+                feedback = "correct"
+            else:
+                feedback = "wrong"
+                correct_answer = word.translation
+
+            # Сохраняем это слово как "последнее пройденное", чтобы не повторить его сразу
+            request.session['last_word_id'] = current_word_id
+            # Удаляем текущее слово из сессии, чтобы при следующем GET выбралось новое
+            if 'quiz_word_id' in request.session:
+                del request.session['quiz_word_id']
+    else:
+        # GET-запрос: Выбираем новое слово
+        form = QuizForm()
+        last_word_id = request.session.get('last_word_id')
+
+        # Исключаем последнее слово из выборки
+        all_words = Word.objects.all()
+        if all_words.count() > 1:
+            words_pool = all_words.exclude(id=last_word_id)
+        else:
+            words_pool = all_words
+
+        if words_pool.exists():
+            new_word = random.choice(list(words_pool))
+            request.session['quiz_word_id'] = new_word.id
+            current_word_id = new_word.id
+        else:
+            return render(request, 'learning/quiz.html', {'error': 'Добавьте хотя бы одно слово в словарь!'})
+
+    # Для отображения в шаблоне нам нужен объект слова, если мы еще не показали фидбек
+    display_word = None
+    if not feedback and current_word_id:
+        display_word = Word.objects.get(id=current_word_id)
+
+    return render(request, 'learning/quiz.html', {
+        'form': form,
+        'word': display_word,
+        'feedback': feedback,
+        'correct_answer': correct_answer,
+        'score': request.session['score']
+    })
+
+def reset_score(request):
+    request.session['score'] = 0
+    return redirect('quiz_view')

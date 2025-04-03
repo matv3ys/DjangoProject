@@ -8,4 +8,6 @@ urlpatterns = [
     path('word/<int:pk>/edit/', views.word_update, name='word_update'),
     path('word/<int:pk>/delete/', views.word_delete, name='word_delete'),
     path('export/', views.export_pdf, name='export_pdf'),
+    path('quiz/', views.quiz_view, name='quiz_view'),
+    path('quiz/reset/', views.reset_score, name='reset_score'),
 ]

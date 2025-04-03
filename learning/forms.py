@@ -46,3 +46,15 @@ class ExportForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         return cleaned_data
+
+class QuizForm(forms.Form):
+    answer = forms.CharField(
+        label="Ваш ответ",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'autofocus': 'on'})
+    )
+
+    def clean_answer(self):
+        answer = self.cleaned_data.get('answer')
+        if not answer:
+            raise ValidationError("Поле не может быть пустым.")
+        return answer.strip().lower()
