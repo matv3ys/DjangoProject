@@ -82,6 +82,7 @@ def export_pdf(request):
         form = ExportForm(request.POST)
         if form.is_valid():
             difficulty = form.cleaned_data['difficulty']
+            include_examples = form.cleaned_data['include_examples']
 
             # Настройка шрифта для кириллицы
             font_path = os.path.join(settings.BASE_DIR, 'learning/fonts', 'DejaVuSans.ttf')
@@ -101,12 +102,26 @@ def export_pdf(request):
                 Word.objects.filter(difficulty=difficulty)
 
             for word in words:
+                p.setFont("DejaVuSans", 12)
                 p.drawString(100, y, f"{word.english_word} — {word.translation}")
                 y -= 20
-                if y < 50:
+
+                if include_examples and word.example_sentence:
+                    p.setFont("DejaVuSans", 10)
+
+                    text = f"Пример: {word.example_sentence}"
+                    if len(text) > 80:
+                        text = text[:77] + "..."
+
+                    p.drawString(120, y, text)
+                    y -= 20
+
+                y -= 10
+
+                if y < 100:
                     p.showPage()
-                    p.setFont("DejaVuSans", 12)
                     y = 800
+                    p.setFont("DejaVuSans", 12)
 
             p.showPage()
             p.save()
